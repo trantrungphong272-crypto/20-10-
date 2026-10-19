@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sự thức giấc của Người bí ẩn 🌿</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: linear-gradient(160deg, #fff5f7 0%, #ffe8ee 45%, #e8f7ee 100%);
+    min-height: 100vh;
+    color: #4a3b42;
+    overflow-x: hidden;
+  }
+
+  .leaf-layer { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .leaf { position: absolute; font-size: 22px; opacity: .35; animation: floatUp linear infinite; }
+  @keyframes floatUp {
+    0%   { transform: translateY(105vh) rotate(0deg); }
+    100% { transform: translateY(-15vh) rotate(360deg); }
+  }
+
+  .wrap { position: relative; max-width: 720px; margin: 0 auto; padding: 0 20px; }
+
+  .hero { text-align: center; padding: 60px 0 20px; }
+  .tiny {
+    font-size: 72px; display: inline-block;
+    animation: bounce 2.4s ease-in-out infinite;
+    filter: drop-shadow(0 10px 14px rgba(224, 92, 138, .25));
+  }
+  @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-14px);} }
+  .hero h1 {
+    font-size: clamp(28px, 5vw, 44px); margin-top: 12px;
+    background: linear-gradient(90deg, #e05c8a, #4caf7d);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero .sub { margin-top: 10px; color: #8a7480; font-size: 15px; }
+  .hint {
+    margin-top: 16px; font-size: 13px; color: #d24d7c;
+    background: #fff0f5; display: inline-block; padding: 10px 18px; border-radius: 16px;
+    border: 1px dashed #ffb3cc; line-height: 1.7;
+  }
+
+  .card {
+    background: rgba(255, 255, 255, .78);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, .9);
+    border-radius: 24px;
+    box-shadow: 0 14px 40px rgba(224, 92, 138, .12);
+    padding: 36px 30px;
+    margin-top: 26px;
+    text-align: center;
+  }
+  .clover { font-size: 44px; display: inline-block; animation: spin 6s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .card h2 { margin: 14px 0 12px; font-size: 22px; color: #d24d7c; }
+  .card p  { line-height: 1.8; color: #6d5c64; font-size: 15.5px; }
+
+  button { font-family: inherit; cursor: pointer; border: none; border-radius: 999px; font-weight: 600; transition: .25s; }
+  .btn-wish {
+    margin-top: 22px; padding: 14px 30px; font-size: 15.5px; color: #fff;
+    background: linear-gradient(135deg, #e05c8a, #f28fb2);
+    box-shadow: 0 8px 22px rgba(224, 92, 138, .35);
+  }
+  .btn-wish:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(224, 92, 138, .45); }
+  .btn-wish:active { transform: scale(.97); }
+
+  footer { text-align: center; margin-top: 40px; padding-bottom: 40px; font-size: 13px; color: #b3a1aa; }
+
+  /* ============================================================
+     BẢNG NHẠC — CHỈ 1 BÀI MP3 LOCAL
+     ============================================================ */
+  .music-panel {
+    position: fixed; top: 16px; right: 16px; z-index: 10001;
+    width: 220px; max-width: calc(100vw - 32px);
+    background: rgba(255, 255, 255, .96);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border: 1.5px solid #ffd6e2;
+    border-radius: 16px;
+    box-shadow: 0 14px 40px rgba(224, 92, 138, .22);
+    overflow: hidden;
+    transition: .3s;
+  }
+
+  .music-header {
+    display: flex; align-items: center; gap: 8px;
+    width: 100%; padding: 11px 13px;
+    background: linear-gradient(135deg, #fff5f8, #ffe8ef);
+    color: #d24d7c; font-size: 13px; font-weight: 700;
+    border-radius: 0; text-align: left;
+    transition: .2s;
+  }
+  .music-header:hover { background: linear-gradient(135deg, #ffeff5, #ffdce8); }
+  .music-header .mh-icon { font-size: 16px; display: inline-block; }
+  .music-header .mh-title { flex: 1; }
+  .music-header .mh-toggle { font-size: 11px; transition: transform .3s; color: #b06080; }
+  .music-panel.collapsed .mh-toggle { transform: rotate(-90deg); }
+  .music-panel.collapsed .music-list { display: none; }
+  .music-panel.collapsed { width: 160px; }
+
+  .music-list {
+    padding: 8px;
+    display: grid; gap: 5px;
+    border-top: 1px solid #ffe0eb;
+  }
+
+  .music-item {
+    display: flex; align-items: center; gap: 9px;
+    width: 100%; padding: 9px 11px;
+    background: #fdfafb; border: 1.5px solid transparent;
+    border-radius: 10px;
+    color: #4a3b42; font-size: 13px; font-weight: 600;
+    text-align: left; transition: .2s;
+  }
+  .music-item:hover {
+    background: #fff5f8; border-color: #ffe0eb;
+    transform: translateX(2px);
+  }
+  .music-item:active { transform: scale(.98); }
+
+  .music-item .mi-icon { font-size: 16px; flex-shrink: 0; width: 20px; text-align: center; }
+  .music-item .mi-name { flex: 1; }
+  .music-item .mi-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #ddd; flex-shrink: 0; transition: .2s;
+  }
+  .music-item.playing {
+    background: linear-gradient(135deg, #e8fff1, #f0fff7);
+    border-color: #b9e8cf;
+    color: #2f8f63;
+  }
+  .music-item.playing .mi-dot {
+    background: #2f8f63;
+    box-shadow: 0 0 0 0 rgba(47, 143, 99, .7);
+    animation: dotPulse 1.2s ease-in-out infinite;
+  }
+  @keyframes dotPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(47, 143, 99, .7); }
+    70%  { box-shadow: 0 0 0 8px rgba(47, 143, 99, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(47, 143, 99, 0); }
+  }
+
+  .music-item.music-stop { color: #a5607a; }
+  .music-item.music-stop:hover { background: #fff0f5; border-color: #ffd6e2; color: #d24d7c; }
+  .music-item.music-stop .mi-dot { display: none; }
+
+  .music-divider { height: 1px; background: #ffe0eb; margin: 3px 0; }
+
+  .music-status {
+    padding: 6px 12px 10px;
+    font-size: 11px; color: #b3a1aa;
+    text-align: center;
+    border-top: 1px solid #ffe0eb;
+  }
+
+  @media (max-width: 640px) {
+    .music-panel { top: 10px; right: 10px; width: 180px; }
+    .music-panel.collapsed { width: 140px; }
+    .music-header { padding: 10px 12px; font-size: 12.5px; }
+    .music-item { padding: 8px 10px; font-size: 12.5px; }
+  }
+
+  /* ============ VẬT THỂ BAY ============ */
+  .pop {
+    position: fixed; left: 0; top: 0; z-index: 9999;
+    pointer-events: none; will-change: transform; transform-origin: center center;
+  }
+  .pop-inner {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    animation: spawnIn .55s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  @keyframes spawnIn {
+    0%   { transform: scale(0) rotate(-25deg); opacity: 0; }
+    60%  { transform: scale(1.12) rotate(6deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+  .pop img { width: 56px; height: 56px; display: block; filter: drop-shadow(0 6px 12px rgba(224, 92, 138, .35)); }
+  .pop span {
+    background: #fff; color: #d24d7c; font-size: 12px; font-weight: 600;
+    padding: 7px 14px; border-radius: 14px; line-height: 1.45; text-align: center;
+    max-width: 230px; word-wrap: break-word; overflow-wrap: break-word;
+    box-shadow: 0 6px 18px rgba(224, 92, 138, .22); border: 1px solid #ffe0eb;
+  }
+  .pop.vanish { pointer-events: none; }
+  .pop.vanish .pop-inner { animation: vanishOut .65s cubic-bezier(.5,-0.3,.7,1) forwards; }
+  @keyframes vanishOut {
+    0%   { transform: scale(1) rotate(0); opacity: 1; filter: brightness(1) drop-shadow(0 0 0 transparent); }
+    30%  { transform: scale(1.35) rotate(-15deg); opacity: 1; filter: brightness(2) drop-shadow(0 0 28px #ffd700); }
+    100% { transform: scale(0) rotate(60deg); opacity: 0; filter: brightness(1) drop-shadow(0 0 0 transparent); }
+  }
+
+  .ring {
+    position: fixed; z-index: 9998; pointer-events: none;
+    width: 24px; height: 24px; border-radius: 50%;
+    border: 3px solid #ffd700; transform: translate(-50%, -50%);
+    box-shadow: 0 0 20px #ffd700; animation: ringOut .7s ease-out forwards;
+  }
+  @keyframes ringOut {
+    0%   { width: 24px;  height: 24px;  opacity: 1; border-width: 4px; }
+    100% { width: 200px; height: 200px; opacity: 0; border-width: 1px; }
+  }
+
+  /* ============ BẢNG Ý NGHĨA ============ */
+  .meaning-panel {
+    position: fixed; right: 14px; bottom: 14px;
+    width: 340px; max-width: calc(100vw - 28px); z-index: 10000;
+    background: rgba(255, 255, 255, .96);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border: 1px solid #ffe0eb; border-radius: 18px;
+    box-shadow: 0 14px 40px rgba(224, 92, 138, .22);
+    overflow: hidden;
+    animation: fadeUp .6s ease both; animation-delay: .3s;
+  }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+
+  .mp-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 14px;
+    background: linear-gradient(135deg, #fff5f8, #ffe8ef);
+    cursor: pointer; user-select: none;
+    font-size: 13px; font-weight: 700; color: #d24d7c; gap: 8px;
+  }
+  .mp-header:hover { background: linear-gradient(135deg, #ffeff5, #ffdce8); }
+  .mp-header .mp-count { font-size: 11.5px; color: #8a7480; font-weight: 600; text-align: right; }
+  .mp-header .mp-count strong { color: #2f8f63; font-size: 15px; }
+  .mp-header .mp-count strong.seen { color: #e05c8a; }
+  .mp-header .toggle-icon { transition: transform .3s; font-size: 12px; display: inline-block; }
+  .meaning-panel.collapsed .toggle-icon { transform: rotate(-90deg); }
+  .meaning-panel.collapsed .mp-list { display: none; }
+  .meaning-panel.collapsed { width: auto; }
+
+  .mp-list {
+    max-height: 340px; overflow-y: auto; padding: 10px;
+    display: grid; gap: 6px;
+  }
+  .mp-list::-webkit-scrollbar { width: 6px; }
+  .mp-list::-webkit-scrollbar-thumb { background: #ffd6e2; border-radius: 3px; }
+
+  .mp-row {
+    display: flex; align-items: center; gap: 9px;
+    padding: 8px 10px; border-radius: 11px;
+    background: #fdfafb; border: 1.5px solid transparent;
+    transition: .3s;
+  }
+  .mp-row.seen { background: #fffafc; border-color: #ffe0eb; }
+  .mp-row.active {
+    background: linear-gradient(135deg, #e8fff1, #f0fff7);
+    border-color: #b9e8cf; box-shadow: 0 3px 10px rgba(47, 143, 99, .12);
+  }
+  .mp-row .icon { font-size: 17px; flex-shrink: 0; }
+  .mp-row .info { flex: 1; min-width: 0; }
+  .mp-row .label { font-weight: 700; color: #4a3b42; font-size: 12.5px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mp-row .meaning { color: #8a7480; font-size: 11px; line-height: 1.35; }
+  .mp-row .badge {
+    min-width: 22px; height: 22px; padding: 0 6px;
+    font-size: 11px; font-weight: 700;
+    background: #ececec; color: #aaa; border-radius: 999px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: .25s;
+  }
+  .mp-row.active .badge { background: #2f8f63; color: #fff; transform: scale(1.08); }
+  .mp-row.seen:not(.active) .badge { background: #ffe0eb; color: #d24d7c; }
+
+  @media (max-width: 640px) {
+    .meaning-panel { right: 10px; bottom: 10px; width: calc(100vw - 20px); }
+    .mp-list { max-height: 220px; }
+    .pop img { width: 48px; height: 48px; }
+    .pop span { font-size: 11px; padding: 6px 11px; max-width: 200px; }
+  }
+
+  /* ============================================================
+     MÀN HÌNH CHÚC MỪNG
+     ============================================================ */
+  .celebration-overlay {
+    position: fixed; inset: 0; z-index: 99999;
+    background: radial-gradient(circle at center,
+                rgba(255, 220, 235, .85) 0%,
+                rgba(255, 190, 215, .95) 60%,
+                rgba(240, 170, 200, .97) 100%);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px; overflow: hidden;
+    animation: overlayIn .5s ease;
+  }
+  @keyframes overlayIn { from{opacity:0;} to{opacity:1;} }
+  .celebration-overlay.closing { animation: overlayOut .55s ease forwards; }
+  @keyframes overlayOut { to { opacity: 0; } }
+
+  .celebration-box {
+    position: relative; z-index: 2;
+    background: rgba(255, 255, 255, .96);
+    border-radius: 32px;
+    padding: 30px 30px 34px;
+    text-align: center;
+    max-width: 480px; width: 100%;
+    box-shadow:
+      0 30px 80px rgba(224, 92, 138, .45),
+      0 0 0 4px rgba(255, 255, 255, .6),
+      0 0 80px rgba(255, 158, 194, .6);
+    animation: boxIn .8s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes boxIn {
+    0%   { transform: scale(0.3) translateY(60px) rotate(-10deg); opacity: 0; }
+    70%  { transform: scale(1.05) translateY(-10px) rotate(2deg); opacity: 1; }
+    100% { transform: scale(1) translateY(0) rotate(0); opacity: 1; }
+  }
+
+  .bouquet-wrap {
+    width: 100%; max-width: 300px; margin: 0 auto;
+    animation: bouquetFloat 3.2s ease-in-out infinite;
+    filter: drop-shadow(0 25px 45px rgba(224, 92, 138, .35));
+    transform-origin: center bottom;
+  }
+  @keyframes bouquetFloat {
+    0%, 100% { transform: translateY(0) rotate(-2deg) scale(1); }
+    50%      { transform: translateY(-18px) rotate(2deg) scale(1.03); }
+  }
+  .bouquet-wrap svg { width: 100%; height: auto; display: block; }
+
+  .celebration-title {
+    font-size: 24px; margin: 18px 0 6px; font-weight: 800;
+    background: linear-gradient(90deg, #e05c8a, #f28fb2, #e05c8a);
+    background-size: 200% auto;
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 3s linear infinite;
+  }
+  @keyframes shimmer { to { background-position: 200% center; } }
+
+  .celebration-msg { color: #8a7480; font-size: 13.5px; margin-bottom: 16px; line-height: 1.5; }
+
+  .celebration-warm {
+    font-size: 16.5px; color: #2f8f63; font-weight: 700;
+    line-height: 1.65; padding: 16px 20px;
+    background: linear-gradient(135deg, #e8fff1, #f0fff7);
+    border-radius: 16px; border: 2px dashed #b9e8cf;
+    margin-bottom: 22px;
+    animation: warmGlow 2.5s ease-in-out infinite;
+  }
+  @keyframes warmGlow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(47,143,99,.15); transform: scale(1); }
+    50%      { box-shadow: 0 0 24px 4px rgba(47,143,99,.28); transform: scale(1.02); }
+  }
+
+  .celebration-close {
+    padding: 12px 32px; font-size: 14.5px; color: #fff;
+    background: linear-gradient(135deg, #e05c8a, #f28fb2);
+    box-shadow: 0 8px 20px rgba(224, 92, 138, .4);
+  }
+  .celebration-close:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 26px rgba(224, 92, 138, .5);
+  }
+
+  .petal {
+    position: absolute; top: -40px;
+    animation: petalFall linear forwards;
+    pointer-events: none; z-index: 1;
+  }
+  @keyframes petalFall {
+    0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0.3; }
+  }
+
+  .sparkle {
+    position: absolute; font-size: 26px;
+    animation: sparkleTwinkle 1.6s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes sparkleTwinkle {
+    0%, 100% { opacity: 0; transform: scale(0.3) rotate(0deg); }
+    50%      { opacity: 1; transform: scale(1.3) rotate(180deg); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ BẢNG NHẠC — CHỈ 1 BÀI ============ -->
+<div class="music-panel" id="musicPanel">
+  <button class="music-header" id="musicHeader">
+    <span class="mh-icon" id="musicIcon">🎵</span>
+    <span class="mh-title" id="musicTitle">Nhạc nền</span>
+    <span class="mh-toggle">▼</span>
+  </button>
+  <div class="music-list" id="musicList">
+    <!-- ⭐ CHỈ CÒN BÀI NÀY — file MP3 local -->
+    <button class="music-item" data-url="nguoi-gieo-mam-xanh.mp3">
+      <span class="mi-icon">🌱</span>
+      <span class="mi-name">Người Gieo Mầm Xanh</span>
+      <span class="mi-dot"></span>
+    </button>
+    <div class="music-divider"></div>
+    <button class="music-item music-stop" id="musicStop">
+      <span class="mi-icon">🔇</span>
+      <span class="mi-name">Tắt nhạc</span>
+    </button>
+  </div>
+  <div class="music-status" id="musicStatus">Bấm để phát nhạc nền</div>
+</div>
+
+<div class="leaf-layer" id="leafLayer"></div>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="tiny">🌱</div>
+    <h1>Sự thức giấc của Người bí ẩn</h1>
+    <p class="sub">Lời chúc 20/10 từ Người bí ẩn 💌</p>
+    <div class="hint">
+      Bấm nút để thả lời chúc bay lượn ✨<br>
+      <strong>Mở đủ 11 lời chúc</strong> để nhận bất ngờ đặc biệt 🌹<br>
+      Bấm <strong>🎵 Nhạc nền</strong> góc phải để nghe nhạc
+    </div>
+  </header>
+
+  <section class="card">
+    <div class="clover">🍀</div>
+    <h2>Chúc mừng ngày Phụ nữ Việt Nam 20/10</h2>
+    <p>
+      Người bí ẩn gửi đến bạn lời chúc sức khỏe, luôn xinh đẹp và thật nhiều may mắn.<br>
+      Mong rằng mỗi ngày của bạn đều rực rỡ như đóa hoa đang nở. 💐
+    </p>
+    <button class="btn-wish" id="btnWish">Nhận lời chúc may mắn ✨</button>
+  </section>
+
+  <footer>Made with 💚 · Người bí ẩn 🌿</footer>
+</div>
+
+<!-- BẢNG Ý NGHĨA -->
+<aside class="meaning-panel" id="meaningPanel">
+  <div class="mp-header" id="mpHeader">
+    <span>📋 Ý nghĩa lời chúc</span>
+    <span class="mp-count">
+      Đang bay: <strong id="activeCount">0</strong>/11<br>
+      Đã mở: <strong class="seen" id="seenCount">0</strong>/11
+    </span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="mp-list" id="mpList"></div>
+</aside>
+
+<script>
+/* ============================================================
+   NHẠC NỀN — CHỈ 1 BÀI MP3 LOCAL
+   ============================================================ */
+const bgm = new Audio();
+bgm.loop = true;
+bgm.volume = 0.5;
+
+const musicPanel  = document.getElementById('musicPanel');
+const musicHeader = document.getElementById('musicHeader');
+const musicIcon   = document.getElementById('musicIcon');
+const musicTitle  = document.getElementById('musicTitle');
+const musicStatus = document.getElementById('musicStatus');
+
+let currentUrl = null;
+
+function updateMusicUI() {
+  const playing = !bgm.paused && currentUrl;
+  musicIcon.textContent = playing ? '🎶' : '🎵';
+  musicTitle.textContent = playing ? 'Đang phát' : 'Nhạc nền';
+  musicStatus.textContent = playing ? 'Nhạc đang phát...' : 'Bấm để phát nhạc nền';
+
+  document.querySelectorAll('.music-item[data-url]').forEach(el => {
+    el.classList.toggle('playing', playing && el.dataset.url === currentUrl);
+  });
+}
+
+document.querySelectorAll('.music-item[data-url]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const url = btn.dataset.url;
+    if (currentUrl === url && !bgm.paused) {
+      bgm.pause();
+      currentUrl = null;
+      updateMusicUI();
+      return;
+    }
+    bgm.src = url;
+    bgm.play().then(() => {
+      currentUrl = url;
+      updateMusicUI();
+    }).catch(err => {
+      musicStatus.textContent = '⚠️ Không phát được. Kiểm tra lại tên file MP3!';
+      console.warn('Lỗi phát nhạc:', err);
+    });
+  });
+});
+
+document.getElementById('musicStop').addEventListener('click', () => {
+  bgm.pause();
+  bgm.currentTime = 0;
+  currentUrl = null;
+  updateMusicUI();
+});
+
+musicHeader.addEventListener('click', () => {
+  musicPanel.classList.toggle('collapsed');
+});
+if (window.innerWidth < 640) {
+  musicPanel.classList.add('collapsed');
+}
+
+/* ============================================================
+   CẤU HÌNH
+   ============================================================ */
+const MAX_PER_WISH = 1;
+
+/* ============ LÁ CỎ NỀN ============ */
+const layer = document.getElementById('leafLayer');
+const symbols = ['🍀', '🌿', '🌸', '💚', '🍃'];
+for (let i = 0; i < 16; i++) {
+  const s = document.createElement('span');
+  s.className = 'leaf';
+  s.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+  s.style.left = Math.random() * 100 + 'vw';
+  s.style.fontSize = (14 + Math.random() * 18) + 'px';
+  s.style.animationDuration = (10 + Math.random() * 12) + 's';
+  s.style.animationDelay = (-Math.random() * 20) + 's';
+  layer.appendChild(s);
+}
+
+/* ============ ẢNH CUTE ============ */
+const CUTE_IMAGES = [
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+     <ellipse cx="22" cy="15" rx="6" ry="14" fill="#ffd6e5"/><ellipse cx="42" cy="15" rx="6" ry="14" fill="#ffd6e5"/>
+     <circle cx="32" cy="38" r="20" fill="#fff0f5" stroke="#ffb3cc" stroke-width="2"/>
+     <circle cx="25" cy="35" r="2.6" fill="#4a3b42"/><circle cx="39" cy="35" r="2.6" fill="#4a3b42"/>
+     <ellipse cx="32" cy="42" rx="3" ry="2.2" fill="#ff8fb0"/>
+     <path d="M32 44 q-4 5 -8 2 M32 44 q4 5 8 2" stroke="#ffb3cc" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+     <circle cx="19" cy="42" r="3.6" fill="#ffc9dc" opacity=".85"/><circle cx="45" cy="42" r="3.6" fill="#ffc9dc" opacity=".85"/>
+   </svg>`,
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+     <path d="M14 27 L12 8 L28 18 Z" fill="#ffe0b2" stroke="#e0a96d" stroke-width="2" stroke-linejoin="round"/>
+     <path d="M50 27 L52 8 L36 18 Z" fill="#ffe0b2" stroke="#e0a96d" stroke-width="2" stroke-linejoin="round"/>
+     <circle cx="32" cy="38" r="20" fill="#fff4e0" stroke="#e0a96d" stroke-width="2"/>
+     <circle cx="25" cy="35" r="2.6" fill="#4a3b42"/><circle cx="39" cy="35" r="2.6" fill="#4a3b42"/>
+     <path d="M30 41 h4 l-2 3 z" fill="#ff8fb0"/>
+     <path d="M32 44 q-4 4 -7 1 M32 44 q4 4 7 1" stroke="#4a3b42" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+   </svg>`,
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+     <circle cx="16" cy="20" r="9" fill="#e8c4a0"/><circle cx="48" cy="20" r="9" fill="#e8c4a0"/>
+     <circle cx="32" cy="36" r="20" fill="#f5dcc5" stroke="#d9a97e" stroke-width="2"/>
+     <circle cx="25" cy="33" r="2.6" fill="#4a3b42"/><circle cx="39" cy="33" r="2.6" fill="#4a3b42"/>
+     <ellipse cx="32" cy="42" rx="8" ry="6" fill="#ffe9d9"/>
+     <ellipse cx="32" cy="40" rx="3" ry="2.2" fill="#4a3b42"/>
+     <path d="M32 42 v3 M32 45 q-3 3 -6 1 M32 45 q3 3 6 1" stroke="#4a3b42" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+   </svg>`,
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+     <path d="M32 54 C10 40 8 26 16 19 C23 13 30 18 32 24 C34 18 41 13 48 19 C56 26 54 40 32 54 Z"
+           fill="#ff9ec2" stroke="#e05c8a" stroke-width="2" stroke-linejoin="round"/>
+     <circle cx="24" cy="26" r="2.4" fill="#fff" opacity=".85"/>
+   </svg>`,
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+     <path d="M32 8 L39 26 L58 27 L43 39 L48 58 L32 47 L16 58 L21 39 L6 27 L25 26 Z"
+           fill="#ffe082" stroke="#f0b429" stroke-width="2" stroke-linejoin="round"/>
+     <circle cx="27" cy="31" r="2.2" fill="#4a3b42"/><circle cx="37" cy="31" r="2.2" fill="#4a3b42"/>
+     <path d="M29 36 q3 3 6 0" stroke="#4a3b42" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+   </svg>`,
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+     <circle cx="24" cy="24" r="11" fill="#7ed6a5"/><circle cx="40" cy="24" r="11" fill="#6ecb96"/>
+     <circle cx="24" cy="40" r="11" fill="#6ecb96"/><circle cx="40" cy="40" r="11" fill="#7ed6a5"/>
+     <path d="M32 44 q4 8 2 16" stroke="#3d8b63" stroke-width="3" fill="none" stroke-linecap="round"/>
+     <circle cx="32" cy="32" r="3.5" fill="#fff8b0"/>
+   </svg>`
+];
+const CUTE_URI = CUTE_IMAGES.map(svg =>
+  'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg.replace(/\s+/g, ' ').trim())
+);
+
+/* ============ DỮ LIỆU LỜI CHÚC ============ */
+const WISH_DATA = [
+  { text: "Nhân ngày 20/10, con chúc mẹ yêu luôn mạnh khỏe, hạnh phúc và mãi là chỗ dựa tinh thần vững chắc cho chúng con. Con yêu mẹ rất nhiều!", label: "Chúc mẹ yêu", meaning: "Mẹ khỏe mạnh, hạnh phúc, là điểm tựa tinh thần", icon: "💐" },
+  { text: "Cảm ơn mẹ vì đã hy sinh cả đời vì gia đình. Chúc người phụ nữ tuyệt vời nhất của con luôn rạng rỡ, bình an và sống thật lâu cùng con cháu.", label: "Cảm ơn mẹ", meaning: "Tri ân sự hy sinh cả đời của mẹ", icon: "🌷" },
+  { text: "Gửi đến bà và mẹ những lời chúc tốt đẹp nhất nhân ngày Phụ nữ Việt Nam. Mong bà và mẹ luôn giữ gìn sức khỏe, vui vẻ và an yên mỗi ngày.", label: "Chúc bà và mẹ", meaning: "Sức khỏe, vui vẻ, an yên mỗi ngày", icon: "🌸" },
+  { text: "Chúc cô bạn thân của tôi ngày 20/10 nhận được thật nhiều quà, luôn xinh đẹp, vui vẻ và sớm tìm được hoàng tử của đời mình nhé!", label: "Chúc bạn thân", meaning: "Nhiều quà, xinh đẹp, sớm có hoàng tử", icon: "💖" },
+  { text: "Nhân ngày Phụ nữ Việt Nam, chúc chị/em gái của tôi luôn tự tin, yêu đời, luôn tỏa sáng theo cách riêng và đạt được mọi dự định trong tương lai.", label: "Chúc chị/em gái", meaning: "Tự tin, yêu đời, toả sáng, đạt dự định", icon: "✨" },
+  { text: "Chúc nửa thế giới ngày 20/10 luôn rực rỡ như những đóa hoa, cuộc sống ngập tràn tiếng cười và những điều tốt đẹp nhất.", label: "Chúc nửa thế giới", meaning: "Rực rỡ, ngập tràn tiếng cười", icon: "🌺" },
+  { text: "Mong rằng ngày 20/10 này và 364 ngày còn lại trong năm, bạn đều được yêu thương, trân trọng và hạnh phúc trọn vẹn.", label: "Chúc 365 ngày", meaning: "Yêu thương suốt cả năm, không chỉ 20/10", icon: "💌" },
+  { text: "Chúc toàn thể chị em phụ nữ ngày 20/10 ngập tràn hạnh phúc, luôn là những bông hoa tươi thắm tỏa hương thơm cho đời.", label: "Chúc chị em phụ nữ", meaning: "Hạnh phúc, toả hương cho đời", icon: "🌹" },
+  { text: "Phụ nữ sinh ra là để được yêu thương. Chúc bạn ngày 20/10 thật ý nghĩa, luôn vui tươi và tràn đầy năng lượng tích cực!", label: "Phụ nữ xứng đáng", meaning: "Ý nghĩa, vui tươi, tích cực", icon: "💕" },
+  { text: "Chúc mừng ngày Phụ nữ Việt Nam 20/10! Mong rằng tất cả phụ nữ trên thế giới luôn được đối xử dịu dàng và trân trọng.", label: "Chúc phụ nữ thế giới", meaning: "Được dịu dàng và trân trọng", icon: "🌍" },
+  { text: "Ngày 20/10 chúc một nửa thế giới luôn xinh đẹp, tự tin, bản lĩnh và gặt hái được nhiều thành công rực rỡ trên con đường mình chọn.", label: "Chúc thành công", meaning: "Tự tin, bản lĩnh, gặt hái thành công", icon: "🏆" }
+];
+
+const WISHES = WISH_DATA.map(w => w.text);
+const rand = arr => arr[Math.floor(Math.random() * arr.length)];
+
+/* ============ TRẠNG THÁI ============ */
+const items = [];
+const seenWishes = new Set();
+let celebrationShown = false;
+
+function enforceLimit(wish) {
+  const same = items.filter(it => it.wish === wish && !it.vanishing);
+  while (same.length > MAX_PER_WISH) vanishItem(same.shift());
+}
+
+function spawnFloating(x, y) {
+  const wish = rand(WISHES);
+  enforceLimit(wish);
+
+  const el = document.createElement('div');
+  el.className = 'pop';
+  const inner = document.createElement('div');
+  inner.className = 'pop-inner';
+
+  const img = document.createElement('img');
+  img.src = rand(CUTE_URI); img.alt = ''; img.width = 56; img.height = 56;
+
+  const text = document.createElement('span');
+  text.textContent = wish;
+
+  inner.append(img, text); el.append(inner);
+  document.body.appendChild(el);
+
+  const w = el.offsetWidth || 240;
+  const h = el.offsetHeight || 120;
+
+  let px = Math.max(0, Math.min(window.innerWidth  - w, x - w / 2));
+  let py = Math.max(0, Math.min(window.innerHeight - h, y - h / 2));
+
+  const speed = 0.7 + Math.random() * 0.9;
+  const angle = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 0.9;
+
+  const item = {
+    el, x: px, y: py, w, h,
+    vx: Math.cos(angle) * speed,
+    vy: Math.sin(angle) * speed,
+    rot: (Math.random() - 0.5) * 10,
+    vr: (Math.random() - 0.5) * 0.3,
+    wish, vanishing: false
+  };
+
+  el.style.transform = `translate(${item.x}px, ${item.y}px) rotate(${item.rot}deg)`;
+  items.push(item);
+  enforceLimit(wish);
+
+  if (!seenWishes.has(wish)) {
+    seenWishes.add(wish);
+    if (seenWishes.size >= WISH_DATA.length && !celebrationShown) {
+      setTimeout(() => {
+        if (!celebrationShown) {
+          celebrationShown = true;
+          showCelebration();
+        }
+      }, 700);
+    }
+  }
+
+  updatePanel();
+}
+
+function vanishItem(item) {
+  if (!item || item.vanishing) return;
+  item.vanishing = true;
+  const idx = items.indexOf(item);
+  if (idx !== -1) items.splice(idx, 1);
+  spawnRing(item.x + item.w / 2, item.y + item.h / 2);
+  item.el.classList.add('vanish');
+  setTimeout(() => item.el.remove(), 750);
+  updatePanel();
+}
+
+function spawnRing(x, y) {
+  const ring = document.createElement('div');
+  ring.className = 'ring';
+  ring.style.left = x + 'px';
+  ring.style.top  = y + 'px';
+  document.body.appendChild(ring);
+  setTimeout(() => ring.remove(), 750);
+}
+
+/* ============ VẬT LÝ ============ */
+function tick() {
+  const vw = window.innerWidth, vh = window.innerHeight;
+  for (let i = 0; i < items.length; i++) {
+    const it = items[i];
+    if (it.vanishing) continue;
+    it.x += it.vx; it.y += it.vy; it.rot += it.vr;
+    if (it.x < 0)              { it.x = 0;           it.vx = Math.abs(it.vx); }
+    else if (it.x + it.w > vw) { it.x = vw - it.w;   it.vx = -Math.abs(it.vx); }
+    if (it.y < 0)              { it.y = 0;           it.vy = Math.abs(it.vy); }
+    else if (it.y + it.h > vh) { it.y = vh - it.h;   it.vy = -Math.abs(it.vy); }
+    if (it.rot > 10)      { it.rot = 10;  it.vr = -Math.abs(it.vr); }
+    else if (it.rot < -10){ it.rot = -10; it.vr = Math.abs(it.vr); }
+    it.el.style.transform = `translate(${it.x}px, ${it.y}px) rotate(${it.rot}deg)`;
+  }
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+
+/* ============ BẢNG Ý NGHĨA ============ */
+const mpList = document.getElementById('mpList');
+const activeCountEl = document.getElementById('activeCount');
+const seenCountEl   = document.getElementById('seenCount');
+
+WISH_DATA.forEach((w, i) => {
+  const row = document.createElement('div');
+  row.className = 'mp-row';
+  row.dataset.index = i;
+  row.innerHTML = `
+    <span class="icon">${w.icon}</span>
+    <div class="info">
+      <div class="label">${w.label}</div>
+      <div class="meaning">${w.meaning}</div>
+    </div>
+    <span class="badge">0</span>
+  `;
+  mpList.appendChild(row);
+});
+
+function updatePanel() {
+  const counts = {};
+  for (const it of items) {
+    if (it.vanishing) continue;
+    counts[it.wish] = (counts[it.wish] || 0) + 1;
+  }
+  let total = 0;
+  WISH_DATA.forEach((w, i) => {
+    const row = mpList.querySelector(`.mp-row[data-index="${i}"]`);
+    const c = counts[w.text] || 0;
+    total += c;
+    row.querySelector('.badge').textContent = c;
+    row.classList.toggle('active', c > 0);
+    row.classList.toggle('seen', seenWishes.has(w.text));
+  });
+  activeCountEl.textContent = total;
+  seenCountEl.textContent = seenWishes.size;
+}
+
+/* ============ PANEL TOGGLE ============ */
+document.getElementById('mpHeader').addEventListener('click', () => {
+  document.getElementById('meaningPanel').classList.toggle('collapsed');
+});
+if (window.innerWidth < 640) {
+  document.getElementById('meaningPanel').classList.add('collapsed');
+}
+
+/* ============================================================
+   MÀN HÌNH CHÚC MỪNG — BÓ HOA LỚN
+   ============================================================ */
+function showCelebration() {
+  const overlay = document.createElement('div');
+  overlay.className = 'celebration-overlay';
+  overlay.innerHTML = `
+    <div class="celebration-box">
+      <span class="sparkle" style="top: 40px; left: 20px; color: #ffd700; animation-delay: 0s;">✨</span>
+      <span class="sparkle" style="top: 80px; right: 30px; color: #ff9ec2; animation-delay: .3s;">✨</span>
+      <span class="sparkle" style="top: 200px; left: 15px; color: #ffe082; animation-delay: .6s;">⭐</span>
+      <span class="sparkle" style="top: 240px; right: 20px; color: #ffd700; animation-delay: .9s;">✨</span>
+      <span class="sparkle" style="top: 130px; left: 60px; color: #ff9ec2; animation-delay: 1.2s;">💫</span>
+
+      <div class="bouquet-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500">
+          <defs>
+            <radialGradient id="rosePink" cx="40%" cy="35%">
+              <stop offset="0%" stop-color="#ffe0eb"/><stop offset="50%" stop-color="#ff9ec2"/><stop offset="100%" stop-color="#e05c8a"/>
+            </radialGradient>
+            <radialGradient id="roseRed" cx="40%" cy="35%">
+              <stop offset="0%" stop-color="#ffb3c1"/><stop offset="50%" stop-color="#e05c8a"/><stop offset="100%" stop-color="#a03060"/>
+            </radialGradient>
+            <radialGradient id="roseYellow" cx="40%" cy="35%">
+              <stop offset="0%" stop-color="#fff8b0"/><stop offset="50%" stop-color="#ffe082"/><stop offset="100%" stop-color="#f0b429"/>
+            </radialGradient>
+            <radialGradient id="rosePurple" cx="40%" cy="35%">
+              <stop offset="0%" stop-color="#e0d4f7"/><stop offset="50%" stop-color="#b19cd9"/><stop offset="100%" stop-color="#7a5fa8"/>
+            </radialGradient>
+          </defs>
+
+          <path d="M130 340 Q90 380 110 440 L290 440 Q310 380 270 340 Z" fill="#fce4ec" stroke="#ffb3cc" stroke-width="2"/>
+          <path d="M130 340 Q200 360 270 340" stroke="#ffb3cc" stroke-width="2" fill="none"/>
+
+          <g stroke="#3d8b63" stroke-width="6" fill="none" stroke-linecap="round">
+            <path d="M200 420 Q200 300 200 180"/>
+            <path d="M200 420 Q170 300 140 160"/>
+            <path d="M200 420 Q230 300 260 160"/>
+            <path d="M200 420 Q160 320 110 220"/>
+            <path d="M200 420 Q240 320 290 220"/>
+            <path d="M200 420 Q200 280 180 100"/>
+            <path d="M200 420 Q200 280 220 100"/>
+          </g>
+
+          <g fill="#7ed6a5">
+            <ellipse cx="155" cy="340" rx="26" ry="11" transform="rotate(-40 155 340)"/>
+            <ellipse cx="245" cy="340" rx="26" ry="11" transform="rotate(40 245 340)"/>
+            <ellipse cx="135" cy="270" rx="24" ry="10" transform="rotate(-30 135 270)"/>
+            <ellipse cx="265" cy="270" rx="24" ry="10" transform="rotate(30 265 270)"/>
+            <ellipse cx="165" cy="200" rx="22" ry="9" transform="rotate(-25 165 200)"/>
+            <ellipse cx="235" cy="200" rx="22" ry="9" transform="rotate(25 235 200)"/>
+          </g>
+
+          <g transform="translate(200 180)">
+            <circle r="45" fill="url(#rosePink)"/>
+            <path d="M-25 -10 Q0 -30 25 -10 Q30 15 0 25 Q-30 15 -25 -10" fill="#ff9ec2" opacity=".6"/>
+            <circle r="18" fill="#fff5f8"/><circle r="10" fill="#ff9ec2"/><circle r="4" fill="#e05c8a"/>
+          </g>
+          <g transform="translate(140 160)">
+            <circle r="38" fill="url(#roseRed)"/>
+            <path d="M-20 -8 Q0 -25 20 -8 Q25 12 0 20 Q-25 12 -20 -8" fill="#ff9ec2" opacity=".5"/>
+            <circle r="15" fill="#ffe0eb"/><circle r="8" fill="#e05c8a"/>
+          </g>
+          <g transform="translate(260 160)">
+            <circle r="38" fill="url(#roseYellow)"/>
+            <path d="M-20 -8 Q0 -25 20 -8 Q25 12 0 20 Q-25 12 -20 -8" fill="#ffe082" opacity=".6"/>
+            <circle r="15" fill="#fff8b0"/><circle r="8" fill="#f0b429"/>
+          </g>
+          <g transform="translate(110 220)">
+            <circle r="32" fill="url(#rosePink)"/>
+            <circle r="12" fill="#fff5f8"/><circle r="6" fill="#ff9ec2"/>
+          </g>
+          <g transform="translate(290 220)">
+            <circle r="32" fill="url(#rosePurple)"/>
+            <circle r="12" fill="#f0e8ff"/><circle r="6" fill="#b19cd9"/>
+          </g>
+          <g transform="translate(180 100)">
+            <circle r="30" fill="url(#roseRed)"/>
+            <circle r="11" fill="#ffe0eb"/><circle r="5" fill="#e05c8a"/>
+          </g>
+          <g transform="translate(220 100)">
+            <circle r="30" fill="url(#rosePink)"/>
+            <circle r="11" fill="#fff5f8"/><circle r="5" fill="#ff9ec2"/>
+          </g>
+
+          <g fill="#fff">
+            <circle cx="160" cy="140" r="4"/><circle cx="240" cy="140" r="4"/>
+            <circle cx="150" cy="200" r="3"/><circle cx="250" cy="200" r="3"/>
+            <circle cx="120" cy="180" r="3"/><circle cx="280" cy="180" r="3"/>
+            <circle cx="200" cy="60" r="4"/>
+          </g>
+
+          <g transform="translate(200 430)">
+            <path d="M-8 0 Q-50 -25 -60 5 Q-50 30 -10 15 Z" fill="#e05c8a" stroke="#c04070" stroke-width="1"/>
+            <path d="M8 0 Q50 -25 60 5 Q50 30 10 15 Z" fill="#e05c8a" stroke="#c04070" stroke-width="1"/>
+            <path d="M-10 15 Q-5 35 -15 50" stroke="#e05c8a" stroke-width="4" fill="none"/>
+            <path d="M10 15 Q5 35 15 50" stroke="#e05c8a" stroke-width="4" fill="none"/>
+            <ellipse cx="0" cy="5" rx="10" ry="8" fill="#ff9ec2" stroke="#c04070" stroke-width="1"/>
+          </g>
+        </svg>
+      </div>
+
+      <h2 class="celebration-title">🌹 Chúc mừng bạn! 🌹</h2>
+      <p class="celebration-msg">Bạn đã mở đủ <strong>11 lời chúc</strong> yêu thương</p>
+      <p class="celebration-warm">
+        Chúc bạn ngày 20/10 thật hạnh phúc,<br>
+        ấm áp và ngập tràn yêu thương! 💐
+      </p>
+      <button class="celebration-close">Đóng lại 💕</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const petalChars = ['🌸','🌷','💐','🌹','💖','✨','🌺','💕'];
+  for (let i = 0; i < 26; i++) {
+    setTimeout(() => {
+      if (!overlay.parentNode) return;
+      const petal = document.createElement('span');
+      petal.className = 'petal';
+      petal.textContent = petalChars[Math.floor(Math.random() * petalChars.length)];
+      petal.style.left = Math.random() * 100 + '%';
+      petal.style.fontSize = (16 + Math.random() * 20) + 'px';
+      petal.style.animationDuration = (4 + Math.random() * 3) + 's';
+      overlay.appendChild(petal);
+      setTimeout(() => petal.remove(), 8000);
+    }, i * 130);
+  }
+
+  const close = () => {
+    overlay.classList.add('closing');
+    setTimeout(() => overlay.remove(), 600);
+    document.removeEventListener('keydown', escHandler);
+  };
+  const escHandler = (e) => { if (e.key === 'Escape') close(); };
+
+  overlay.querySelector('.celebration-close').addEventListener('click', close);
+  overlay.addEventListener('click', (e) => { if (e.target === e.currentTarget) close(); });
+  document.addEventListener('keydown', escHandler);
+}
+
+/* ============ NÚT CHÍNH ============ */
+document.getElementById('btnWish').addEventListener('click', (e) => {
+  spawnFloating(e.clientX, Math.max(60, e.clientY - 100));
+});
+</script>
+</body>
+</html>
